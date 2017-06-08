@@ -1,0 +1,13 @@
+﻿<Controls:MetroWindow x:Class="MusicShop.MainWindow"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicShop"
+        mc:Ignorable="d"
+        Title="Muj Obchod" MinHeight="725" MinWidth="1055">    
+    <Grid>
+        <Frame x:Name="_mainFrame" Source="CatalogPage.xaml" NavigationUIVisibility="Hidden" />
+    </Grid>
+</Controls:MetroWindow>
