@@ -52,7 +52,7 @@
                 </Grid.RowDefinitions>
                 <Image Source="Assets/user.png" Margin="15,24,5,1" />
                 <Image Source="Assets/register.png" Margin="15,4,5,24" Grid.Row="1" />
-                <TextBlock Foreground="White" Grid.Column="1" VerticalAlignment="Bottom" FontSize="17" Height="23">Prihlasit</TextBlock>
+                <TextBlock x:Name="Login" Foreground="White" Grid.Column="1" VerticalAlignment="Bottom" FontSize="17" Height="23">Prihlasit</TextBlock>
                 <TextBlock Foreground="White" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" FontSize="17" Height="23">Registrovat</TextBlock>
             </Grid>
 
@@ -112,7 +112,7 @@
                         <GridViewColumn Width="120">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button>
+                                    <Button x:Name="DeleteFormCart_Button" Tag="{Binding Name}" Click="DeleteFormCart_Button_Click">
                                         <Image Source="Assets/delete.png" Width="10" Height="10"></Image>
                                     </Button>
                                 </DataTemplate>

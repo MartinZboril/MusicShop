@@ -25,9 +25,23 @@ namespace MusicShop
     {
         string[] GoodsName;
         string[] Category;
+        List<Goods> GoodsNameToCart = new List<Goods>();
+        List<string> GoodsNameCart = new List<string>();
         public CatalogPage()
         {
             InitializeComponent();
+            AddGoodsCategory();
+            AddGoodsInformation();
+            AddGoodsImage();
+            AddGoodsToCatalog();
+            DisplayDatabase();
+        }
+
+        public CatalogPage(List<Goods> GoodsInCart, List<string> GoodsNameCart1)
+        {
+            InitializeComponent();
+            GoodsNameToCart = GoodsInCart;
+            GoodsNameCart = GoodsNameCart1;
             AddGoodsCategory();
             AddGoodsInformation();
             AddGoodsImage();
@@ -407,6 +421,27 @@ namespace MusicShop
             }
             GoodsListview.ItemsSource = query;
             ListViewOfCategories.ItemsSource = queryofcategories;
+        }
+
+        private void Buy_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+                 string item = (e.Source as Button).Tag.ToString();
+
+                 for (int i = 0; i < GoodsName.Length; i++)
+                 {
+                     if (item.ToString().Contains(GoodsName[i]))
+                     {
+
+                         Goods goods = GoodsDatabase.GetItemAsync(GoodsName[i]).Result;
+                    GoodsNameToCart.Add(goods);
+                    GoodsNameCart.Add(item);
+                         NavigationService ns = NavigationService.GetNavigationService(this);
+                         ns.Navigate(new ShopPage(GoodsNameToCart, GoodsNameCart));
+                     }
+                 }
+             
+              
         }
     }
 }

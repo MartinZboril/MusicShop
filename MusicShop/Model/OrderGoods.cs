@@ -12,5 +12,6 @@ namespace MusicShop.Model
         public int OrderGoodsID { get; set; }
         public int OrderID { get; set; }
         public int GoodsID { get; set; }
+        public int GoodsQauntity { get; set; }
     }
 }
