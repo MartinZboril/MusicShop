@@ -104,7 +104,7 @@
                         <GridViewColumn Header="Mnozstvi" Width="120">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding Piece}"></TextBox>
+                                    <TextBox x:Name="PieceOfGoods" TextChanged="PieceOfGoods_TextChanged" Tag="{Binding Name}" Text="{Binding GoodsQauntity}"></TextBox>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

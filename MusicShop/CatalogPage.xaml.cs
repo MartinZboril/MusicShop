@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using MusicShop.Model;
 using MusicShop.Database;
 using System.Diagnostics;
+using MusicShop.Class;
 
 namespace MusicShop
 {
@@ -25,8 +26,9 @@ namespace MusicShop
     {
         string[] GoodsName;
         string[] Category;
-        List<Goods> GoodsNameToCart = new List<Goods>();
+        List<int> Piece = new List<int>();
         List<string> GoodsNameCart = new List<string>();
+        List<CartGoods> GoodsCartList = new List<CartGoods>();
         public CatalogPage()
         {
             InitializeComponent();
@@ -37,11 +39,12 @@ namespace MusicShop
             DisplayDatabase();
         }
 
-        public CatalogPage(List<Goods> GoodsInCart, List<string> GoodsNameCart1)
+        public CatalogPage(List<string> GoodsNameCart1, List<CartGoods> GoodsCartList1, List<int> GoodsPiece)
         {
             InitializeComponent();
-            GoodsNameToCart = GoodsInCart;
             GoodsNameCart = GoodsNameCart1;
+            GoodsCartList = GoodsCartList1;
+            Piece = GoodsPiece;
             AddGoodsCategory();
             AddGoodsInformation();
             AddGoodsImage();
@@ -52,7 +55,7 @@ namespace MusicShop
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new ShopPage());
+            ns.Navigate(new ShopPage(GoodsNameCart, GoodsCartList, Piece));
         }
 
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -69,13 +72,13 @@ namespace MusicShop
                     {
                         var goods = GoodsDatabase.GetItemAsync(GoodsName[i]).Result;
                         NavigationService ns = NavigationService.GetNavigationService(this);
-                        ns.Navigate(new DetailPage(goods));
+                        ns.Navigate(new DetailPage(goods, GoodsNameCart, GoodsCartList, Piece));
                     }
                 }
 
             }
         }
-        
+
 
         private void DisplayDatabase()
         {
@@ -89,7 +92,7 @@ namespace MusicShop
                         join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
                         join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
                         select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-     
+
             var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
 
             Debug.WriteLine(goods1.Count);
@@ -106,7 +109,7 @@ namespace MusicShop
             //DisplayDatabase();
             GoodsName = new string[] { "Blink-182 - Enema of the State", "Simple Plan - Still Not Getting Any...", "Good Charlotte - The Young and the Hopeless", "Sum 41 - All Killer No Filler", "Anti-Flag - Underground Network", "Green day - American Idiot", "Boxcar Racer - Boxcar Racer" };
             int[] GoodsPrice = new int[] { 449, 329, 249, 229, 319, 399, 239 };
-            int[] GoodsCategory = new int[] { 1, 1, 2, 2, 1, 1, 2};
+            int[] GoodsCategory = new int[] { 1, 1, 2, 2, 1, 1, 2 };
             int[] GoodsInformation = new int[] { 1, 2, 3, 4, 5, 6, 7 };
             int[] GoodsImage = new int[] { 1, 2, 3, 4, 5, 6, 7 };
 
@@ -160,7 +163,7 @@ namespace MusicShop
         public void AddGoodsInformation()
         {
             //DisplayDatabase();
-            int[] Year = new int[] { 1999, 2000, 2001, 2001, 2002, 2003, 2002, 2005};
+            int[] Year = new int[] { 1999, 2000, 2001, 2001, 2002, 2003, 2002, 2005 };
             string[] Type = new string[] { "CD", "CD", "CD+DVD", "CD+LP", "CD", "CD", "CD+DVD audio", "CD+Blu-ray" };
             string[] Description = new string[] { "Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Nulla non lectus sed nisl molestie malesuada. Quisque tincidunt scelerisque libero.", "Phasellus rhoncus. Quisque tincidunt scelerisque libero. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Nullam at arcu a est sollicitudin euismod.", "Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Aenean fermentum risus id tortor. ", "Integer tempor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aenean vel massa quis mauris vehicula lacinia. Etiam posuere lacus quis dolor.", "Integer tempor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aenean vel massa quis mauris vehicula lacinia. Etiam posuere lacus quis dolor.", "Nulla non arcu lacinia neque faucibus fringilla. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. Fusce wisi.", "Proin mattis lacinia justo. Et harum quidem rerum facilis est et expedita distinctio. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem.", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Nullam at arcu a est sollicitudin euismod. Nunc auctor. Aliquam erat volutpat. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?" };
 
@@ -257,7 +260,7 @@ namespace MusicShop
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            string SearchWord = Search.Text.ToString();           
+            string SearchWord = Search.Text.ToString();
             var queryofsearchingword = GoodsDatabase.GetSearchWord(SearchWord).Result;
             List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
             List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
@@ -296,7 +299,7 @@ namespace MusicShop
             if (ListViewOfCategories.SelectedItem != null)
             {
                 var item = ListViewOfCategories.SelectedItem as GoodsCategory;
-                
+
 
                 List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
                 List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
@@ -394,10 +397,10 @@ namespace MusicShop
             if (selectedtext.Equals("dle nazvu"))
             {
                 goods1 = GoodsDatabase.GetGoodsByName().Result;
-            } else if(selectedtext.Equals("od nejlevnejsiho"))
+            } else if (selectedtext.Equals("od nejlevnejsiho"))
             {
                 goods1 = GoodsDatabase.GetGoodsByLowestPrice().Result;
-            } else if(selectedtext.Equals("od nejdrazsiho"))
+            } else if (selectedtext.Equals("od nejdrazsiho"))
             {
                 goods1 = GoodsDatabase.GetGoodsByHighestPrice().Result;
             }
@@ -426,22 +429,33 @@ namespace MusicShop
         private void Buy_Button_Click(object sender, RoutedEventArgs e)
         {
 
-                 string item = (e.Source as Button).Tag.ToString();
+            string item = (e.Source as Button).Tag.ToString();
+            var itemToCheck = GoodsCartList.SingleOrDefault(r => r.Name == item);
 
-                 for (int i = 0; i < GoodsName.Length; i++)
-                 {
-                     if (item.ToString().Contains(GoodsName[i]))
-                     {
+            if (itemToCheck != null)
+            {
+                for (int i = 0; i < GoodsNameCart.Count; i++)
+                {
+                    if (item.Equals(GoodsNameCart[i]))
+                    {
+                        Piece[i] += 1; 
+                    }
+                }
 
-                         Goods goods = GoodsDatabase.GetItemAsync(GoodsName[i]).Result;
-                    GoodsNameToCart.Add(goods);
-                    GoodsNameCart.Add(item);
-                         NavigationService ns = NavigationService.GetNavigationService(this);
-                         ns.Navigate(new ShopPage(GoodsNameToCart, GoodsNameCart));
-                     }
-                 }
-             
-              
+                itemToCheck.GoodsQauntity += 1;
+                itemToCheck.TotalPrice = itemToCheck.GoodsQauntity * itemToCheck.Price;
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new ShopPage(GoodsNameCart, GoodsCartList, Piece));
+            }
+            else
+            {
+                GoodsNameCart.Add(item);
+                Piece.Add(1);
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new ShopPage(GoodsNameCart, Piece));
+            }
         }
+          
     }
+
 }

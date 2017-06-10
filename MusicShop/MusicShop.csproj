@@ -86,6 +86,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Class\CartGoods.cs" />
     <Compile Include="Database\GoodsImageDatabase.cs" />
     <Compile Include="Database\GoodsCategoryDatabase.cs" />
     <Compile Include="Database\GoodsInformationDatabase.cs" />

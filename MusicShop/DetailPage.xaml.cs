@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MusicShop.Model;
 using MusicShop.Database;
+using MusicShop.Class;
 
 namespace MusicShop
 {
@@ -22,10 +23,16 @@ namespace MusicShop
     /// </summary>
     public partial class DetailPage : Page
     {
-        public DetailPage(Goods selectedgoods)
+        List<string> GoodsName = new List<string>();
+        List<CartGoods> GoodsCartList = new List<CartGoods>();
+        List<int> PieceList = new List<int>();
+        public DetailPage(Goods selectedgoods, List<string> GoodsNameFromCart, List<CartGoods> GoodsFromCart, List<int> PieceList1)
         {
             InitializeComponent();
-            
+
+            GoodsName = GoodsNameFromCart;
+            GoodsCartList = GoodsFromCart;
+            PieceList = PieceList1;
             List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
 
 
@@ -49,6 +56,7 @@ namespace MusicShop
             Category.Text = category.Category;
             Type.Text = information.Type.ToString();
             Price.Text = goods.Price.ToString()+" Kc";
+            Buy_Button.Tag = goods.Name;
             Description.Text = information.Description.ToString();
 
             ImageOfAlbum.Source = new BitmapImage(new Uri($"{queryofimage.ImageName}", UriKind.Relative));
@@ -57,13 +65,13 @@ namespace MusicShop
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new ShopPage());
+            ns.Navigate(new ShopPage(GoodsName, GoodsCartList, PieceList));
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new CatalogPage());
+            ns.Navigate(new CatalogPage(GoodsName, GoodsCartList, PieceList));
         }
 
         private static GoodsDatabase _goodsdatabase;
@@ -120,6 +128,15 @@ namespace MusicShop
                 }
                 return _goodsimagedatabase;
             }
+        }
+
+        private void Buy_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string item = (e.Source as Button).Tag.ToString();
+            GoodsName.Add(item);
+            PieceList.Add(int.Parse(Piece.Text));
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new ShopPage(GoodsName, PieceList));
         }
     }
 }

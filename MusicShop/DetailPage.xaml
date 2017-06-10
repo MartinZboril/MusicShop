@@ -191,9 +191,9 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBox Grid.Column="0" VerticalAlignment="Top" Text="1" Height="30" Margin="0,0,10,0"/>
+                                <TextBox x:Name="Piece" Grid.Column="0" VerticalAlignment="Top" Text="1" Height="30" Margin="0,0,10,0"/>
                                 <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="5,7,10,23" Height="16" >KS</TextBlock>
-                                <Button Grid.Column="2" VerticalAlignment="Top" Height="30" Content="Koupit" Margin="10,0,253,0"/>
+                                <Button x:Name="Buy_Button" Grid.Column="2" VerticalAlignment="Top" Height="30" Content="Koupit" Click="Buy_Button_Click" Margin="10,0,253,0"/>
                             </Grid>
 
 
