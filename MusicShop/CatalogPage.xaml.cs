@@ -58,6 +58,12 @@ namespace MusicShop
             ns.Navigate(new ShopPage(GoodsNameCart, GoodsCartList, Piece));
         }
 
+        private void OrderView_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new OrderView(GoodsNameCart, GoodsCartList, Piece));
+        }
+
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (GoodsListview.SelectedItem != null)

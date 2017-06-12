@@ -87,9 +87,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Class\CartGoods.cs" />
+    <Compile Include="Class\PotentialCustomer.cs" />
+    <Compile Include="Class\Transport.cs" />
+    <Compile Include="Database\AddressDatabase.cs" />
+    <Compile Include="Database\ContactInformationDatabase.cs" />
+    <Compile Include="Database\CustomerDatabase.cs" />
     <Compile Include="Database\GoodsImageDatabase.cs" />
     <Compile Include="Database\GoodsCategoryDatabase.cs" />
     <Compile Include="Database\GoodsInformationDatabase.cs" />
+    <Compile Include="Database\OrderDatabase.cs" />
+    <Compile Include="Database\OrderGoodsDatabase.cs" />
+    <Compile Include="Database\OrderTransportDatabase.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="Database\GoodsDatabase.cs" />
     <Compile Include="Model\Address.cs" />
@@ -99,9 +107,7 @@
     <Compile Include="Model\GoodsGoodsCategory.cs" />
     <Compile Include="Model\GoodsInformation.cs" />
     <Compile Include="Model\GoodsImage.cs" />
-    <Compile Include="Model\OrderInformation.cs" />
-    <Compile Include="Model\Payment.cs" />
-    <Compile Include="Model\Transport.cs" />
+    <Compile Include="Model\OrderTransport.cs" />
     <Compile Include="DetailPage.xaml.cs">
       <DependentUpon>DetailPage.xaml</DependentUpon>
     </Compile>
@@ -113,6 +119,9 @@
     <Compile Include="Model\OrderGoods.cs" />
     <Compile Include="OrderPage.xaml.cs">
       <DependentUpon>OrderPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OrderView.xaml.cs">
+      <DependentUpon>OrderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShopPage.xaml.cs">
       <DependentUpon>ShopPage.xaml</DependentUpon>
@@ -145,6 +154,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="OrderPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OrderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

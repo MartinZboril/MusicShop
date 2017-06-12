@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace MusicShop.Model
 {
-    class OrderInformation
+    public class OrderTransport
     {
         [PrimaryKey, AutoIncrement]
-        public int OrderInformationID { get; set; }
-        public int OrderNumber { get; set; }
-        public string OrderDescription { get; set; }
+        public int TransportID { get; set; }
+        public string TypeOfTransport { get; set; }
+        public int Price { get; set; }
     }
 }

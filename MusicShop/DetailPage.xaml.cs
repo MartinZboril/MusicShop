@@ -138,5 +138,11 @@ namespace MusicShop
             NavigationService ns = NavigationService.GetNavigationService(this);
             ns.Navigate(new ShopPage(GoodsName, PieceList));
         }
+
+        private void OrderView_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new OrderView(GoodsName, GoodsCartList, PieceList));
+        }
     }
 }

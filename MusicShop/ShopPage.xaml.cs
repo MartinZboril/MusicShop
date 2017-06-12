@@ -46,7 +46,7 @@ namespace MusicShop
             CartGoodsList = GoodsFromCart;
             Piece = GoodsPiece;
             listView.ItemsSource = CartGoodsList;
-
+            GetValueForShopCartInfo(GoodsFromCart);
         }
 
         public ShopPage(List<string> GoodsNameFromCatalog, List<int> GoodsPiece)
@@ -66,9 +66,112 @@ namespace MusicShop
                 CartGoodsList.Add(CartGoods);
             }
             listView.ItemsSource = CartGoodsList;
-            
+            GetValueForShopCartInfo(CartGoodsList);
         }
 
+
+        public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPrice += cartgoods[i].Price;
+            }
+            return TotalPrice;
+        }
+
+        public int GetTotalPieceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPiece = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPiece += cartgoods[i].GoodsQauntity;
+            }
+            return TotalPiece;
+        }
+
+        public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
+        {
+            int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kc";
+            int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Polozek";
+        }
+
+        private void DeleteFormCart_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string item = (e.Source as Button).Tag.ToString();
+            GoodsName.Remove(item);
+
+            var itemToRemove = CartGoodsList.SingleOrDefault(r => r.Name == item);
+            if (itemToRemove != null)
+            {
+                CartGoodsList.Remove(itemToRemove);
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
+            }
+
+            List<CartGoods> CartGoodsList1 = new List<CartGoods>();
+            CartGoodsList1 = CartGoodsList;
+            listView.ItemsSource = CartGoodsList;
+        }
+
+
+        private void PieceOfGoods_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string item = (e.Source as TextBox).Tag.ToString();
+            string itemText = (e.Source as TextBox).Text.ToString();
+            int n;
+            bool isNumeric = int.TryParse(itemText, out n);
+
+            if (isNumeric)
+            {
+                var itemToCheck = CartGoodsList.SingleOrDefault(r => r.Name == item);
+
+                if (itemToCheck != null)
+                {
+                    for (int i = 0; i < GoodsName.Count; i++)
+                    {
+                        if (item.Equals(GoodsName[i]))
+                        {
+                            Piece[i] += n;
+                        }
+                    }
+
+                    itemToCheck.GoodsQauntity += n - itemToCheck.GoodsQauntity;
+                    itemToCheck.TotalPrice = itemToCheck.GoodsQauntity * itemToCheck.Price;
+                    NavigationService ns = NavigationService.GetNavigationService(this);
+                    ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
+                }
+                List<CartGoods> CartGoodsList1 = new List<CartGoods>();
+                CartGoodsList1 = CartGoodsList;
+                listView.ItemsSource = CartGoodsList;
+            }
+        }
+
+        private void CartButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
+        }
+
+        private void ContinueButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new OrderPage(CartGoodsList, GoodsName, Piece));
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsName, CartGoodsList, Piece));
+        }
+
+        private void OrderView_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new OrderView(GoodsName, CartGoodsList, Piece));
+        }
 
         private static GoodsDatabase _goodsdatabase;
         public static GoodsDatabase GoodsDatabase
@@ -123,83 +226,6 @@ namespace MusicShop
                     _goodsimagedatabase = new GoodsImageDatabase(fileHelper.GetLocalFilePath("TodoSQLite.db3"));
                 }
                 return _goodsimagedatabase;
-            }
-        }
-
-        private void CartButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
-        }
-
-        private void ContinueButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new OrderPage());
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new CatalogPage(GoodsName, CartGoodsList, Piece));
-        }
-
-        private void DeleteFormCart_Button_Click(object sender, RoutedEventArgs e)
-        {
-            string item = (e.Source as Button).Tag.ToString();
-            GoodsName.Remove(item);
-
-            string a = item;
-            
-                    var itemToRemove = CartGoodsList.SingleOrDefault(r => r.Name == item);
-                    if (itemToRemove != null)
-                    {                   
-                        CartGoodsList.Remove(itemToRemove);
-                NavigationService ns = NavigationService.GetNavigationService(this);
-                ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
-            }
-
-            List<CartGoods> CartGoodsList1 = new List<CartGoods>();
-            CartGoodsList1 = CartGoodsList;
-            listView.ItemsSource = CartGoodsList;
-            Login.Text = a.ToString();
-        }
-
-
-        private void PieceOfGoods_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string item = (e.Source as TextBox).Tag.ToString();
-            string itemText = (e.Source as TextBox).Text.ToString();
-
-            int n;
-            bool isNumeric = int.TryParse(itemText, out n);
-            Login.Text = itemText;
-            if (isNumeric)
-            {
-                var itemToCheck = CartGoodsList.SingleOrDefault(r => r.Name == item);
-
-                if (itemToCheck != null)
-                {
-                     for (int i = 0; i < GoodsName.Count; i++)
-                     {
-                         if (item.Equals(GoodsName[i]))
-                         {
-                             // Potreba osetrit
-                             Piece[i] += n;
-
-                         }
-                     }
-
-                    itemToCheck.GoodsQauntity += n - itemToCheck.GoodsQauntity;
-                    itemToCheck.TotalPrice = itemToCheck.GoodsQauntity * itemToCheck.Price;
-                    NavigationService ns = NavigationService.GetNavigationService(this);
-                    ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
-                }
-                Login.Text = itemText;
-                List<CartGoods> CartGoodsList1 = new List<CartGoods>();
-                CartGoodsList1 = CartGoodsList;
-                listView.ItemsSource = CartGoodsList;
-
             }
         }
     }

@@ -14,7 +14,7 @@ namespace MusicShop.Model
         public int CustomerID { get; set; }
         public int OrderInformationID { get; set; }
         public int TransportID { get; set; }
-        public string OrderName { get; set; }
-        public string OrderPrice{ get; set; }
+        public int OrderNumber { get; set; }
+        public int OrderPrice{ get; set; }
     }
 }

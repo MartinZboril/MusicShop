@@ -57,6 +57,12 @@ namespace MusicShop
             return database.Table<Goods>().Where(i => i.Name == name).FirstOrDefaultAsync();
         }
 
+        // Query using LINQ
+        public Task<Goods> GetItemAsyncByID(int id)
+        {
+            return database.Table<Goods>().Where(i => i.GoodsID == id).FirstOrDefaultAsync();
+        }
+
         public Task<int> SaveItemAsync(Goods item)
         {
             if (item.GoodsID != 0)

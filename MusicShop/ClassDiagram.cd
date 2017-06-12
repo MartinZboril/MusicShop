@@ -8,21 +8,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MusicShop.Model.Goods">
-    <Position X="13.25" Y="2.25" Width="1.5" />
+    <Position X="13.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAgAAAQBAAAAAAAABAAQAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAAAAAAAQBAAAAAAAABIAQAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Model\Goods.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MusicShop.Model.Order">
-    <Position X="17.75" Y="3" Width="1.5" />
+    <Position X="18.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAABAAAABAAAAAEAAAAAgAAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAABIAAAAAABAAAAAAAAAAEAAAAAgAAIAAAAAAAAA=</HashCode>
       <FileName>Model\Order.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MusicShop.Model.GoodsCategory">
-    <Position X="11.25" Y="1" Width="1.5" />
+    <Position X="11.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Model\GoodsCategory.cs</FileName>
@@ -31,56 +31,42 @@
   <Class Name="MusicShop.Model.Address">
     <Position X="24" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAAAgAAAAAAAAAIAAAAEAAAAAAAAAIABBAAAAA=</HashCode>
+      <HashCode>QAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAIAABAAAAA=</HashCode>
       <FileName>Model\Address.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MusicShop.Model.ContactInformation">
     <Position X="22" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAEAAAAAAAAAAAIAAAAQA=</HashCode>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAQA=</HashCode>
       <FileName>Model\ContactInformation.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MusicShop.Model.ImageLibrary">
+  <Class Name="MusicShop.Model.GoodsImage">
     <Position X="15" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAABAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\ImageLibrary.cs</FileName>
+      <FileName>Model\GoodsImage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MusicShop.Model.Transport">
-    <Position X="16" Y="5" Width="1.5" />
+  <Class Name="MusicShop.Model.OrderTransport">
+    <Position X="18.25" Y="6" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Transport.cs</FileName>
+      <HashCode>AAAAAAAAAQACAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\OrderTransport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MusicShop.Model.GoodsInformation">
     <Position X="13.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAQAAAAEAAAA=</HashCode>
+      <HashCode>AAAAAAAAAABgAAAAQAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Model\GoodsInformation.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="MusicShop.Model.OrderInformation">
-    <Position X="17.75" Y="5.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAAAAAAAABAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
-      <FileName>Model\OrderInformation.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="MusicShop.Model.Payment">
-    <Position X="19.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Payment.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="MusicShop.Model.OrderGoods">
-    <Position X="17.75" Y="1" Width="1.5" />
+    <Position X="18.25" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAgAAIA=</HashCode>
       <FileName>Model\OrderGoods.cs</FileName>
     </TypeIdentifier>
   </Class>

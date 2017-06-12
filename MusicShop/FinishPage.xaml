@@ -43,17 +43,13 @@
 
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="47" />
                     <RowDefinition Height="47" />
                 </Grid.RowDefinitions>
-                <Image Source="Assets/user.png" Margin="15,24,5,1" />
-                <Image Source="Assets/register.png" Margin="15,4,5,24" Grid.Row="1" />
-                <TextBlock Foreground="White" Grid.Column="1" VerticalAlignment="Bottom" FontSize="17" Height="23">Prihlasit</TextBlock>
-                <TextBlock Foreground="White" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" FontSize="17" Height="23">Registrovat</TextBlock>
+                <Button Grid.Row="0" Grid.RowSpan="2" FontSize="17" Content="Vase objednavky" Height="40" Click="OrderView_Click"/>
             </Grid>
 
             <Label Grid.Column="3"  BorderBrush="Black" BorderThickness="1" Foreground="Black" Background="#FFEAEAEA" Margin="24,8,29,10">
@@ -90,8 +86,48 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="1" Grid.Row="1" FontSize="36">Vase objednavka byla uspesne prijata</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="2" FontSize="20">Cislo vasi objednavky je 356845.</TextBlock>
-            
+            <TextBlock x:Name="Number" Grid.Column="1" Grid.Row="1" FontSize="20" Margin="603,0,0,0"></TextBlock>
+
+            <ListView x:Name="OrderListView" Grid.Column="1" Grid.Row="2" Margin="0,0,0,237" Grid.RowSpan="2">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding OrderGoodsID}"></TextBlock>
+                            <TextBlock Text="{Binding OrderID}"></TextBlock>
+                            <TextBlock Text="{Binding GoodsID}"></TextBlock>
+                            <TextBlock Text="Zde konci"></TextBlock>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ListView x:Name="OrderListView1" Grid.Column="1" Grid.Row="3" Margin="0,192,0,120">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding OrderID}"></TextBlock>
+                            <TextBlock Text="Zde konci"></TextBlock>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ListView x:Name="CutomerListView" Grid.Column="1" Grid.Row="3" Margin="0,314,0,1" RenderTransformOrigin="0.5,0.5">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding CustomerID}"></TextBlock>
+                            <TextBlock Text="{Binding ContactInformationID}"></TextBlock>
+                            <TextBlock Text="{Binding AddressID}"></TextBlock>
+                            <TextBlock Text="Zde konci"></TextBlock>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
             <Grid Grid.Row="4" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10" />

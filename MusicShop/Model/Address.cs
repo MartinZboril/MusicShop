@@ -11,11 +11,8 @@ namespace MusicShop.Model
     {
         [PrimaryKey, AutoIncrement]
         public int AddressID { get; set; }
-        public int CustomerID { get; set; }
         public string Street { get; set; }
-        public int StreetNumber { get; set; }
         public string Town { get; set; }
         public int PostNumber { get; set; }
-        public string State { get; set; }
     }
 }
