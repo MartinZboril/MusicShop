@@ -33,6 +33,7 @@ namespace MusicShop
         {
             InitializeComponent();
             Piece = Piece1;
+
             Address Address = new Address();
             Address.Street = Customer1.Street;
             Address.Town = Customer1.Town;
@@ -63,19 +64,14 @@ namespace MusicShop
             Random r = new Random();
             int rnd = r.Next();
 
-            int TotalPrice = 0;
-
-            for (int i = 0; i < GoodsInCart.Count; i++)
-            {
-                TotalPrice += GoodsInCart[i].TotalPrice;
-            }
+            int TotalPrice = GetTotalPrice();
 
             Order Order = new Order();
             Order.CustomerID = Customer.CustomerID;
             Order.TransportID = Transport.TransportID;
             
             Order.OrderNumber = rnd;
-            Order.OrderPrice = TotalPrice;//n = Order.OrderID;
+            Order.OrderPrice = TotalPrice;
             OrderDatabase.SaveItemAsync(Order);
             DebugMethod();
 
@@ -83,7 +79,6 @@ namespace MusicShop
 
             List<Customer> clist = new List<Customer>();
             clist = CustomerDatabase.GetItemsAsync().Result;
-            CutomerListView.ItemsSource = clist;
 
             for (int i = 0; i < GoodsName.Count; i++)
             {
@@ -98,8 +93,44 @@ namespace MusicShop
 
             var ordergoods = OrderGoodsDatabase.GetItemsAsync().Result;
             var order = OrderDatabase.GetItemsAsync().Result;
-            OrderListView.ItemsSource = ordergoods;
-            OrderListView1.ItemsSource = order;
+        }
+
+        public int GetTotalPrice()
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < GoodsInCart.Count; i++)
+            {
+                TotalPrice += GoodsInCart[i].TotalPrice;
+            }
+            return TotalPrice;
+        }
+
+        public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
+        {
+            int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
+            int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
+        }
+
+        public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPrice += cartgoods[i].Price;
+            }
+            return TotalPrice;
+        }
+
+        public int GetTotalPieceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPiece = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPiece += cartgoods[i].GoodsQauntity;
+            }
+            return TotalPiece;
         }
 
         public void DebugMethod()
@@ -125,6 +156,12 @@ namespace MusicShop
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
             ns.Navigate(new OrderView(GoodsName, GoodsInCart, Piece));
+        }
+
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsName, GoodsInCart, Piece));
         }
 
         private static GoodsDatabase _goodsdatabase;

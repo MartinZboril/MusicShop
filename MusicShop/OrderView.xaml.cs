@@ -30,69 +30,85 @@ namespace MusicShop
         public OrderView(List<string> GoodsName, List<CartGoods> GoodsInCart, List<int> PieceList)
         {
             InitializeComponent();
-            ListCreate(GoodsName, GoodsInCart, PieceList);
+            GoodsNameCart = GoodsName;
+            GoodsCartList = GoodsInCart;
+            Piece = PieceList;
+            GetValueForShopCartInfo(GoodsCartList);
         }
 
         private void SearchOrderButton_Click(object sender, RoutedEventArgs e)
         {
-            int SearchNumber = int.Parse(SearchWordText.Text);
+            int SearchNumber;
+            if (int.TryParse(SearchWordText.Text, out SearchNumber))
+            {
             List<Order> orderlist = new List<Order>();
             var orderlist1 = OrderDatabase.GetItemAsync(SearchNumber).Result;
-            orderlist.Add(orderlist1);
 
-            List<OrderGoods> ordergoods1 = new List<OrderGoods>();
-            ordergoods1 = OrderGoodsDatabase.GetItemsAsync().Result;
+                if (orderlist1 != null)
+                {
+                orderlist.Add(orderlist1);
 
-            var query_where1 = from a in ordergoods1 where a.OrderID.Equals(orderlist[0].OrderID) select a;
+                List<OrderGoods> ordergoods1 = new List<OrderGoods>();
+                ordergoods1 = OrderGoodsDatabase.GetItemsAsync().Result;
 
-            List<OrderGoods> ordergoods2 = new List<OrderGoods>();
+                var query_where1 = from a in ordergoods1 where a.OrderID.Equals(orderlist[0].OrderID) select a;
 
-            foreach (var a in query_where1)
+                List<OrderGoods> ordergoods2 = new List<OrderGoods>();
+
+                foreach (var a in query_where1)
+                {
+                    ordergoods2.Add(a);
+                }
+
+                List<Goods> goodslist1 = new List<Goods>();
+                goodslist1 = GetGoodsToList(ordergoods2);
+            
+                var query = from ordergoods in ordergoods2 join goodslist in goodslist1 on ordergoods.GoodsID equals goodslist.GoodsID select new { Name = goodslist.Name, Price = goodslist.Price, TotalPrice = (goodslist.Price * ordergoods.GoodsQauntity), GoodsQauntity = ordergoods.GoodsQauntity};
+                ListViewOfOrder.ItemsSource = query;
+
+                List<OrderTransport> transport = new List<OrderTransport>();
+                transport = OrderTransportDatabase.GetItemsAsync().Result;
+
+                var query_where4 = from a in transport where a.TransportID.Equals(orderlist[0].TransportID) select a;
+
+                foreach (var a in query_where4)
+                {
+                    transport.Add(a);
+                }
+
+                List<Customer> customer = new List<Customer>();
+                var query_where = CustomerDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
+                customer.Add(query_where);
+
+                List<Address> address = new List<Address>();
+                var query_address = AddressDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
+                address.Add(query_address);
+
+                List<ContactInformation> contactinformation = new List<ContactInformation>();
+                var query_contactinformation = ContactInformationDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
+                contactinformation.Add(query_contactinformation);
+
+                Name.Text = customer[0].Name + " " + customer[0].Surname;
+                Address.Text = address[0].Street + ", " + address[0].Town + ", " + address[0].PostNumber.ToString();
+                Transport.Text = transport[0].TypeOfTransport;
+                Phone.Text = contactinformation[0].Phone.ToString();
+                Mail.Text = contactinformation[0].Email.ToString();
+                Price.Text = orderlist[0].OrderPrice.ToString();
+
+                ChangeVisibility();
+                }
+                else
+                {
+                    ChangeVisibility1();
+                    SearchWordText.Text = "";
+                    Warning.Visibility = Visibility.Visible;
+                }
+            } else
             {
-                ordergoods2.Add(a);
+                ChangeVisibility1();
+                SearchWordText.Text = "";
+                Warning.Visibility = Visibility.Visible;
             }
-
-            List<Goods> goodslist1 = new List<Goods>();
-            goodslist1 = GetGoodsToList(ordergoods2);
-
-            var query = from ordergoods in ordergoods2 join goodslist in goodslist1 on ordergoods.GoodsID equals goodslist.GoodsID select new { Name = goodslist.Name, Price = (goodslist.Price * ordergoods.GoodsQauntity), GoodsQauntity = ordergoods.GoodsQauntity };
-            ListViewOfOrder.ItemsSource = query;
-
-            List<OrderTransport> transport = new List<OrderTransport>();
-            transport = OrderTransportDatabase.GetItemsAsync().Result;
-
-            var query_where4 = from a in transport where a.TransportID.Equals(orderlist[0].TransportID) select a;
-
-            foreach (var a in query_where4)
-            {
-                transport.Add(a);
-            }
-
-            List<Customer> customer = new List<Customer>();
-            var query_where = CustomerDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
-            customer.Add(query_where);
-
-            List<Address> address = new List<Address>();
-            var query_address = AddressDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
-            address.Add(query_address);
-
-            List<ContactInformation> contactinformation = new List<ContactInformation>();
-            var query_contactinformation = ContactInformationDatabase.GetItemAsync(orderlist[0].CustomerID).Result;
-            contactinformation.Add(query_contactinformation);
-
-            Name.Text = customer[0].Name + " " + customer[0].Surname;
-            Address.Text = address[0].Street + ", " + address[0].Town + ", " + address[0].PostNumber.ToString();
-            Transport.Text = transport[0].TypeOfTransport;
-            Phone.Text = contactinformation[0].Phone.ToString();
-            Mail.Text = contactinformation[0].Email.ToString();
-            Price.Text = orderlist[0].OrderPrice.ToString();
-        }
-
-        public void ListCreate(List<string> GoodsName, List<CartGoods> GoodsInCart, List<int> PieceList)
-        {
-            GoodsNameCart = GoodsName;
-            GoodsCartList = GoodsInCart;
-            Piece = PieceList;
         }
 
         public List<Goods> GetGoodsToList(List<OrderGoods> ordergoods)
@@ -110,9 +126,9 @@ namespace MusicShop
         public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
         {
             int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
-            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kc";
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
             int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
-            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Polozek";
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
         }
 
         public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
@@ -135,6 +151,44 @@ namespace MusicShop
             return TotalPiece;
         }
 
+        public void ChangeVisibility()
+        {
+            Warning.Visibility = Visibility.Hidden;
+            Name.Visibility = Visibility.Visible;
+            Name1.Visibility = Visibility.Visible;
+            Mail.Visibility = Visibility.Visible;
+            Mail1.Visibility = Visibility.Visible;
+            Phone.Visibility = Visibility.Visible;
+            Phone1.Visibility = Visibility.Visible;
+            Address.Visibility = Visibility.Visible;
+            Address1.Visibility = Visibility.Visible;
+            Transport.Visibility = Visibility.Visible;
+            Transport1.Visibility = Visibility.Visible;
+            Price.Visibility = Visibility.Visible;
+            Price1.Visibility = Visibility.Visible;
+            ListViewOfOrder.Visibility = Visibility.Visible;
+            SearchWordText.Text = "";
+        }
+
+        public void ChangeVisibility1()
+        {
+            Warning.Visibility = Visibility.Visible;
+            Name.Visibility = Visibility.Hidden;
+            Name1.Visibility = Visibility.Hidden;
+            Mail.Visibility = Visibility.Hidden;
+            Mail1.Visibility = Visibility.Hidden;
+            Phone.Visibility = Visibility.Hidden;
+            Phone1.Visibility = Visibility.Hidden;
+            Address.Visibility = Visibility.Hidden;
+            Address1.Visibility = Visibility.Hidden;
+            Transport.Visibility = Visibility.Hidden;
+            Transport1.Visibility = Visibility.Hidden;
+            Price.Visibility = Visibility.Hidden;
+            Price1.Visibility = Visibility.Hidden;
+            ListViewOfOrder.Visibility = Visibility.Hidden;
+            SearchWordText.Text = "";
+        }
+
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
@@ -145,6 +199,12 @@ namespace MusicShop
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
             ns.Navigate(new OrderView(GoodsNameCart, GoodsCartList, Piece));
+        }
+
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsNameCart, GoodsCartList, Piece));
         }
 
         private static GoodsDatabase _goodsdatabase;
@@ -158,6 +218,20 @@ namespace MusicShop
                     _goodsdatabase = new GoodsDatabase(fileHelper.GetLocalFilePath("TodoSQLite.db3"));
                 }
                 return _goodsdatabase;
+            }
+        }
+
+        private static GoodsImageDatabase _goodsimagedatabase;
+        public static GoodsImageDatabase GoodsImageDatabase
+        {
+            get
+            {
+                if (_goodsimagedatabase == null)
+                {
+                    var fileHelper = new FileHelper();
+                    _goodsimagedatabase = new GoodsImageDatabase(fileHelper.GetLocalFilePath("TodoSQLite.db3"));
+                }
+                return _goodsimagedatabase;
             }
         }
 

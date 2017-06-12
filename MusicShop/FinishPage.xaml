@@ -24,50 +24,37 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Foreground="White" FontSize="36" FontWeight="Bold" FontFamily="Segoe WP" VerticalAlignment="Center" HorizontalAlignment="Center" Height="50" Margin="0,26" Width="244">M MujObchod</TextBlock>
-
-            <Grid Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250" />
-                    <ColumnDefinition Width="50" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <TextBox Grid.Column="0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="40" Width="191" Margin="36,27,23,27"/>
-                <Button Width="50" Height="40" Grid.ColumnSpan="2" Margin="227,27,23,27" >
-                    <Image Source="Assets/search.png"></Image>
-                </Button>
-            </Grid>
+            <Button x:Name="NameOfShop"  FontSize="36" FontWeight="Bold" FontFamily="Segoe WP" VerticalAlignment="Center" HorizontalAlignment="Center" Background="#FF9E0909" BorderBrush="#FF9E0909" BorderThickness="0" Foreground="White" Click="NameOfShop_Click" Height="50" Margin="0,26" Width="244">Music shop</Button>
 
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="47" />
                     <RowDefinition Height="47" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Grid.RowSpan="2" FontSize="17" Content="Vase objednavky" Height="40" Click="OrderView_Click"/>
+                <Button Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" FontSize="17" Content="Vaše objednávky" VerticalAlignment="Center" HorizontalAlignment="Center" Height="40" Click="OrderView_Click" Margin="0,28,-31,28"/>
             </Grid>
 
             <Label Grid.Column="3"  BorderBrush="Black" BorderThickness="1" Foreground="Black" Background="#FFEAEAEA" Margin="24,8,29,10">
-                <Grid Width="120">
+                <Grid Margin="10,7,0,0" Width="200">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60" />
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="26" />
                         <RowDefinition Height="30" />
                     </Grid.RowDefinitions>
 
-                    <Button x:Name="CartButton" Grid.Row="1" Margin="10,0" Click="CartButton_Click">
+                    <Button x:Name="CartButton" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Height="35" Width="35" Grid.RowSpan="2" Click="CartButton_Click" >
                         <Image Source="Assets/cart.png"></Image>
                     </Button>
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">0 Kc</TextBlock>
-                    <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">0 polozek</TextBlock>
+                    <TextBlock x:Name="PriceOFSelectedGoods" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Margin="0,0,0,6" Width="122" FontSize="16">0 Kč</TextBlock>
+                    <TextBlock x:Name="PieceOFSelectedGoods"  Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" Margin="0,4,0,3" Width="84" FontSize="16">0 Ks</TextBlock>
                 </Grid>
             </Label>
         </Grid>
@@ -85,49 +72,11 @@
                 <RowDefinition Height="70" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="36">Vase objednavka byla uspesne prijata</TextBlock>
-            <TextBlock x:Name="Number" Grid.Column="1" Grid.Row="1" FontSize="20" Margin="603,0,0,0"></TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="36">Vaše objednávka byla úspěšně přijata pod číslem</TextBlock>
+            <TextBlock x:Name="Number" Grid.Column="1" Grid.Row="1" FontSize="36" Margin="783,0,0,0"></TextBlock>
 
-            <ListView x:Name="OrderListView" Grid.Column="1" Grid.Row="2" Margin="0,0,0,237" Grid.RowSpan="2">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding OrderGoodsID}"></TextBlock>
-                            <TextBlock Text="{Binding OrderID}"></TextBlock>
-                            <TextBlock Text="{Binding GoodsID}"></TextBlock>
-                            <TextBlock Text="Zde konci"></TextBlock>
-                        </StackPanel>
-
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <ListView x:Name="OrderListView1" Grid.Column="1" Grid.Row="3" Margin="0,192,0,120">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding OrderID}"></TextBlock>
-                            <TextBlock Text="Zde konci"></TextBlock>
-                        </StackPanel>
-
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <ListView x:Name="CutomerListView" Grid.Column="1" Grid.Row="3" Margin="0,314,0,1" RenderTransformOrigin="0.5,0.5">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding CustomerID}"></TextBlock>
-                            <TextBlock Text="{Binding ContactInformationID}"></TextBlock>
-                            <TextBlock Text="{Binding AddressID}"></TextBlock>
-                            <TextBlock Text="Zde konci"></TextBlock>
-                        </StackPanel>
-
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
+            <TextBlock Grid.Column="1" Grid.Row="3" FontSize="28" TextWrapping="Wrap">Svoji objednávku si můžete prohlédnout po zadaní čísla objednávky v sekci Vaše objednávky.</TextBlock>
+            
             <Grid Grid.Row="4" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10" />
@@ -140,7 +89,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button x:Name="ContinueVutton" Grid.Column="3" Content="Pokracovat" Click="ContinueButton_Click"></Button>
+                <Button x:Name="ContinueButton" Grid.Column="3" Content="Pokračovat" Click="ContinueButton_Click"></Button>
             </Grid>
         </Grid>
     </Grid>

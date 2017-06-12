@@ -29,14 +29,16 @@ namespace MusicShop
         List<int> Piece = new List<int>();
         List<string> GoodsNameCart = new List<string>();
         List<CartGoods> GoodsCartList = new List<CartGoods>();
+
         public CatalogPage()
         {
             InitializeComponent();
             AddGoodsCategory();
             AddGoodsInformation();
             AddGoodsImage();
-            AddGoodsToCatalog();
+            AddGoodsToCatalog();          
             DisplayDatabase();
+            GetValueForShopCartInfo(GoodsCartList);
         }
 
         public CatalogPage(List<string> GoodsNameCart1, List<CartGoods> GoodsCartList1, List<int> GoodsPiece)
@@ -50,6 +52,70 @@ namespace MusicShop
             AddGoodsImage();
             AddGoodsToCatalog();
             DisplayDatabase();
+            GetValueForShopCartInfo(GoodsCartList);
+        }
+
+        public CatalogPage(GoodsCategory item, List<string> GoodsNameCart1, List<CartGoods> GoodsCartList1, List<int> GoodsPiece)
+        {
+            InitializeComponent();
+            GoodsNameCart = GoodsNameCart1;
+            GoodsCartList = GoodsCartList1;
+            Piece = GoodsPiece;
+            AddGoodsCategory();
+            AddGoodsInformation();
+            AddGoodsImage();
+            AddGoodsToCatalog();
+            DisplayDatabase();
+            GetValueForShopCartInfo(GoodsCartList);
+
+
+            List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+            var query = from goods in goods1
+                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                        where goodscategory.Category == item.Category
+                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+            GoodsListview.ItemsSource = query;
+        }
+
+        public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
+        {
+            int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
+            int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
+        }
+
+        public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPrice += cartgoods[i].Price;
+            }
+            return TotalPrice;
+        }
+
+        public int GetTotalPieceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPiece = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPiece += cartgoods[i].GoodsQauntity;
+            }
+            return TotalPiece;
+        }
+
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsNameCart, GoodsCartList, Piece));
         }
 
         private void CartButton_Click(object sender, RoutedEventArgs e)
@@ -70,8 +136,6 @@ namespace MusicShop
             {
                 var item = GoodsListview.SelectedItem;
 
-
-
                 for (int i = 0; i < GoodsName.Length; i++)
                 {
                     if (item.ToString().Contains(GoodsName[i]))
@@ -84,7 +148,6 @@ namespace MusicShop
 
             }
         }
-
 
         private void DisplayDatabase()
         {
@@ -108,6 +171,211 @@ namespace MusicShop
             }
             GoodsListview.ItemsSource = query;
             ListViewOfCategories.ItemsSource = queryofcategories;
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            string SearchWord = Search.Text.ToString();
+            var queryofsearchingword = GoodsDatabase.GetSearchWord(SearchWord).Result;
+            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+            var query = from goods in queryofsearchingword
+                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+            GoodsListview.ItemsSource = query;
+        }
+
+        private void SearchByLetter_Click(object sender, RoutedEventArgs e)
+        {
+            var keyword = (e.Source as Button).Content.ToString();
+            string SearchWord = keyword;
+            var queryofsearchingword = GoodsDatabase.GetSearchWord(SearchWord).Result;
+            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+            var query = from goods in queryofsearchingword
+                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+            GoodsListview.ItemsSource = query;
+        }
+
+        private void ListViewOfCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            if (ListViewOfCategories.SelectedItem != null)
+            {
+                var item = ListViewOfCategories.SelectedItem as GoodsCategory;
+
+
+                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+                var query = from goods in goods1
+                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                            where goodscategory.Category == item.Category
+                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+                GoodsListview.ItemsSource = query;
+
+            }
+        }
+
+        private void OrderBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string value = OrderBox.SelectedItem.ToString();
+
+            ComboBoxItem cbi = (ComboBoxItem)OrderBox.SelectedItem;
+            string selectedText = cbi.Content.ToString();
+
+            if (selectedText.Equals("neseřazeno"))
+            {
+
+            }
+
+            if (selectedText.Equals("dle nazvu"))
+            {
+                GetJoinedDatatable(selectedText);
+            }
+
+            if (selectedText.Equals("od nejlevnejsiho"))
+            {
+                GetJoinedDatatable(selectedText);
+            }
+
+            if (selectedText.Equals("od nejdrazsiho"))
+            {
+                GetJoinedDatatable(selectedText);
+            }
+
+            if (selectedText.Equals("od nejnovejsiho"))
+            {
+                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+                var query = from goods in goods1
+                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                            orderby goodsinformation.YearOfRealising descending
+                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+                var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+
+                Debug.WriteLine(goods1.Count);
+                foreach (Goods Item in goods1)
+                {
+                    Debug.WriteLine(Item);
+                }
+                GoodsListview.ItemsSource = query;
+                ListViewOfCategories.ItemsSource = queryofcategories;
+            }
+
+            if (selectedText.Equals("od nejstarsiho"))
+            {
+                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+                var query = from goods in goods1
+                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                            orderby goodsinformation.YearOfRealising
+                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+                var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+
+                Debug.WriteLine(goods1.Count);
+                foreach (Goods Item in goods1)
+                {
+                    Debug.WriteLine(Item);
+                }
+                GoodsListview.ItemsSource = query;
+                ListViewOfCategories.ItemsSource = queryofcategories;
+            }
+        }
+
+        public void GetJoinedDatatable(string selectedtext)
+        {
+            List<Goods> goods1 = new List<Goods>();
+            if (selectedtext.Equals("dle nazvu"))
+            {
+                goods1 = GoodsDatabase.GetGoodsByName().Result;
+            }
+            else if (selectedtext.Equals("od nejlevnejsiho"))
+            {
+                goods1 = GoodsDatabase.GetGoodsByLowestPrice().Result;
+            }
+            else if (selectedtext.Equals("od nejdrazsiho"))
+            {
+                goods1 = GoodsDatabase.GetGoodsByHighestPrice().Result;
+            }
+
+            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
+            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
+
+            var query = from goods in goods1
+                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
+                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
+                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
+                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
+
+            var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
+
+            Debug.WriteLine(goods1.Count);
+            foreach (Goods Item in goods1)
+            {
+                Debug.WriteLine(Item);
+            }
+            GoodsListview.ItemsSource = query;
+            ListViewOfCategories.ItemsSource = queryofcategories;
+        }
+
+        private void Buy_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+            string item = (e.Source as Button).Tag.ToString();
+            var itemToCheck = GoodsCartList.SingleOrDefault(r => r.Name == item);
+
+            if (itemToCheck != null)
+            {
+                for (int i = 0; i < GoodsNameCart.Count; i++)
+                {
+                    if (item.Equals(GoodsNameCart[i]))
+                    {
+                        Piece[i] += 1;
+                    }
+                }
+
+                itemToCheck.GoodsQauntity += 1;
+                itemToCheck.TotalPrice = itemToCheck.GoodsQauntity * itemToCheck.Price;
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new ShopPage(GoodsNameCart, GoodsCartList, Piece));
+            }
+            else
+            {
+                GoodsNameCart.Add(item);
+                Piece.Add(1);
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new ShopPage(GoodsNameCart, Piece));
+            }
         }
 
         public void AddGoodsToCatalog()
@@ -263,205 +531,5 @@ namespace MusicShop
                 return _goodsimagedatabase;
             }
         }
-
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            string SearchWord = Search.Text.ToString();
-            var queryofsearchingword = GoodsDatabase.GetSearchWord(SearchWord).Result;
-            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-            var query = from goods in queryofsearchingword
-                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-            GoodsListview.ItemsSource = query;
-        }
-
-        private void SearchByLetter_Click(object sender, RoutedEventArgs e)
-        {
-            var keyword = (e.Source as Button).Content.ToString();
-            string SearchWord = keyword;
-            var queryofsearchingword = GoodsDatabase.GetSearchWord(SearchWord).Result;
-            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-            var query = from goods in queryofsearchingword
-                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-            GoodsListview.ItemsSource = query;
-        }
-
-        private void ListViewOfCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-            if (ListViewOfCategories.SelectedItem != null)
-            {
-                var item = ListViewOfCategories.SelectedItem as GoodsCategory;
-
-
-                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-                var query = from goods in goods1
-                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                            where goodscategory.Category == item.Category
-                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-                GoodsListview.ItemsSource = query;
-
-            }
-        }
-
-        private void OrderBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string value = OrderBox.SelectedItem.ToString();
-
-            ComboBoxItem cbi = (ComboBoxItem)OrderBox.SelectedItem;
-            string selectedText = cbi.Content.ToString();
-
-            if (selectedText.Equals("dle nazvu"))
-            {
-                GetJoinedDatatable(selectedText);
-            }
-
-            if (selectedText.Equals("od nejlevnejsiho"))
-            {
-                GetJoinedDatatable(selectedText);
-            }
-
-            if (selectedText.Equals("od nejdrazsiho"))
-            {
-                GetJoinedDatatable(selectedText);
-            }
-
-            if (selectedText.Equals("od nejnovejsiho"))
-            {
-                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-                var query = from goods in goods1
-                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                            orderby goodsinformation.YearOfRealising descending
-                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-                var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-
-                Debug.WriteLine(goods1.Count);
-                foreach (Goods Item in goods1)
-                {
-                    Debug.WriteLine(Item);
-                }
-                GoodsListview.ItemsSource = query;
-                ListViewOfCategories.ItemsSource = queryofcategories;
-            }
-
-            if (selectedText.Equals("od nejstarsiho"))
-            {
-                List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-                List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-                var query = from goods in goods1
-                            join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                            join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                            join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                            orderby goodsinformation.YearOfRealising
-                            select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-                var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-
-                Debug.WriteLine(goods1.Count);
-                foreach (Goods Item in goods1)
-                {
-                    Debug.WriteLine(Item);
-                }
-                GoodsListview.ItemsSource = query;
-                ListViewOfCategories.ItemsSource = queryofcategories;
-            }
-        }
-
-        public void GetJoinedDatatable(string selectedtext)
-        {
-            List<Goods> goods1 = new List<Goods>();
-            if (selectedtext.Equals("dle nazvu"))
-            {
-                goods1 = GoodsDatabase.GetGoodsByName().Result;
-            } else if (selectedtext.Equals("od nejlevnejsiho"))
-            {
-                goods1 = GoodsDatabase.GetGoodsByLowestPrice().Result;
-            } else if (selectedtext.Equals("od nejdrazsiho"))
-            {
-                goods1 = GoodsDatabase.GetGoodsByHighestPrice().Result;
-            }
-
-            List<GoodsCategory> goodscategory1 = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsInformation> goodsinformation1 = GoodsInformationDatabase.GetItemsNotDoneAsync().Result;
-            List<GoodsImage> goodsimage1 = GoodsImageDatabase.GetItemsNotDoneAsync().Result;
-
-            var query = from goods in goods1
-                        join goodscategory in goodscategory1 on goods.GoodsCategoryID equals goodscategory.GoodsCategoryID
-                        join goodsinformation in goodsinformation1 on goods.GoodsInformationID equals goodsinformation.GoodsInformationID
-                        join goodsimage in goodsimage1 on goods.GoodsImageID equals goodsimage.ImageID
-                        select new { Name = goods.Name, Price = goods.Price, Category = goodscategory.Category, Type = goodsinformation.Type, ImageName = goodsimage.ImageName };
-
-            var queryofcategories = GoodsCategoryDatabase.GetItemsNotDoneAsync().Result;
-
-            Debug.WriteLine(goods1.Count);
-            foreach (Goods Item in goods1)
-            {
-                Debug.WriteLine(Item);
-            }
-            GoodsListview.ItemsSource = query;
-            ListViewOfCategories.ItemsSource = queryofcategories;
-        }
-
-        private void Buy_Button_Click(object sender, RoutedEventArgs e)
-        {
-
-            string item = (e.Source as Button).Tag.ToString();
-            var itemToCheck = GoodsCartList.SingleOrDefault(r => r.Name == item);
-
-            if (itemToCheck != null)
-            {
-                for (int i = 0; i < GoodsNameCart.Count; i++)
-                {
-                    if (item.Equals(GoodsNameCart[i]))
-                    {
-                        Piece[i] += 1; 
-                    }
-                }
-
-                itemToCheck.GoodsQauntity += 1;
-                itemToCheck.TotalPrice = itemToCheck.GoodsQauntity * itemToCheck.Price;
-                NavigationService ns = NavigationService.GetNavigationService(this);
-                ns.Navigate(new ShopPage(GoodsNameCart, GoodsCartList, Piece));
-            }
-            else
-            {
-                GoodsNameCart.Add(item);
-                Piece.Add(1);
-                NavigationService ns = NavigationService.GetNavigationService(this);
-                ns.Navigate(new ShopPage(GoodsNameCart, Piece));
-            }
-        }
-          
     }
-
 }

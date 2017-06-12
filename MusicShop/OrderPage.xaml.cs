@@ -29,27 +29,65 @@ namespace MusicShop
         public OrderPage(List<CartGoods> GoodsInCart1, List<string> GoodsName1, List<int> PieceOfGoods)
         {
             InitializeComponent();
-            GoodsInCart = GoodsInCart1;
             GoodsName = GoodsName1;
+            GoodsInCart = GoodsInCart1;
             Piece = PieceOfGoods;
             List<Transport> TransportToCheckBox = new List<Transport>();
             TransportToCheckBox = Transport();
             CheckBoxList.ItemsSource = TransportToCheckBox;
+            GetValueForShopCartInfo(GoodsInCart);
         }
 
         private void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
+            Warning.Visibility = Visibility.Hidden;
+            int number = 0;
+            int postcode = 0;
+            if (Name.Text != "" && Surname.Text != "" && Mail.Text != "" && int.TryParse(Phone.Text, out number) && Street.Text != "" && Town.Text != "" && int.TryParse(PostCode.Text, out postcode))
+            {
             PotentialCustomer Customer = new PotentialCustomer();
             Customer.Name = Name.Text;
             Customer.Surname = Surname.Text;
             Customer.Mail = Mail.Text;
-            Customer.Phone = int.Parse(Phone.Text);
+            Customer.Phone = number;
             Customer.Street = Street.Text;
             Customer.Town = Town.Text;
-            Customer.PostCode = PostCode.Text;
+            Customer.PostCode = postcode;
 
             NavigationService ns = NavigationService.GetNavigationService(this);
             ns.Navigate(new FinishPage(Customer, TransportToSend, GoodsName, GoodsInCart, Piece));
+            } else
+            {
+                Warning.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
+        {
+            int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
+            int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
+        }
+
+        public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPrice += cartgoods[i].Price;
+            }
+            return TotalPrice;
+        }
+
+        public int GetTotalPieceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPiece = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPiece += cartgoods[i].GoodsQauntity;
+            }
+            return TotalPiece;
         }
 
         private void CartButton_Click(object sender, RoutedEventArgs e)
@@ -70,18 +108,24 @@ namespace MusicShop
             ns.Navigate(new OrderView(GoodsName, GoodsInCart, Piece));
         }
 
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsName, GoodsInCart, Piece));
+        }
+
         public List<Transport> Transport()
         {
             Transport transport = new Transport();
-            transport.Name = "Osobni odber";
+            transport.Name = "Osobní odběr";
             transport.Price = 0;
             transport.IsSelected = false;
             Transport transport1 = new Transport();
-            transport1.Name = "Balik na postu";
+            transport1.Name = "Balík na poštu";
             transport1.Price = 100;
             transport1.IsSelected = false;
             Transport transport2 = new Transport();
-            transport2.Name = "Balik do ruky";
+            transport2.Name = "Balík do ruky";
             transport2.Price = 120;
             transport2.IsSelected = false;
             Transport transport3 = new Transport();

@@ -51,7 +51,7 @@ namespace MusicShop
 
         public ShopPage(List<string> GoodsNameFromCatalog, List<int> GoodsPiece)
         {
-            InitializeComponent();
+            InitializeComponent();          
             GoodsName = GoodsNameFromCatalog;
             Piece = GoodsPiece;
             for (int i = 0; i < GoodsName.Count; i++)
@@ -68,7 +68,6 @@ namespace MusicShop
             listView.ItemsSource = CartGoodsList;
             GetValueForShopCartInfo(CartGoodsList);
         }
-
 
         public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
         {
@@ -93,9 +92,9 @@ namespace MusicShop
         public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
         {
             int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
-            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kc";
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
             int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
-            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Polozek";
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
         }
 
         private void DeleteFormCart_Button_Click(object sender, RoutedEventArgs e)
@@ -155,10 +154,23 @@ namespace MusicShop
             ns.Navigate(new ShopPage(CartGoodsList, GoodsName));
         }
 
-        private void ContinueButton_Click(object sender, RoutedEventArgs e)
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
-            ns.Navigate(new OrderPage(CartGoodsList, GoodsName, Piece));
+            ns.Navigate(new CatalogPage(GoodsName, CartGoodsList, Piece));
+        }
+
+        private void ContinueButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CartGoodsList.Count == 0)
+            {
+
+            } else
+            {
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new OrderPage(CartGoodsList, GoodsName, Piece));
+            }
+
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)

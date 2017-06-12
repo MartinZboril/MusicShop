@@ -14,6 +14,6 @@ namespace MusicShop.Class
         public int Phone { get; set; }
         public string Street { get; set; }
         public string Town { get; set; }
-        public string PostCode { get; set; }
+        public int PostCode { get; set; }
     }
 }

@@ -29,11 +29,11 @@ namespace MusicShop
         public DetailPage(Goods selectedgoods, List<string> GoodsNameFromCart, List<CartGoods> GoodsFromCart, List<int> PieceList1)
         {
             InitializeComponent();
-
             GoodsName = GoodsNameFromCart;
             GoodsCartList = GoodsFromCart;
             PieceList = PieceList1;
-            List<Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
+            GetValueForShopCartInfo(GoodsCartList);
+            List <Goods> goods1 = GoodsDatabase.GetItemsNotDoneAsync().Result;
 
 
             Goods goods = new Goods();
@@ -61,7 +61,47 @@ namespace MusicShop
 
             ImageOfAlbum.Source = new BitmapImage(new Uri($"{queryofimage.ImageName}", UriKind.Relative));
         }
-     
+
+        public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
+        {
+            int TotalPrice = GetTotalPriceOfSelectedGoods(GoodsFromCart);
+            PriceOFSelectedGoods.Text = TotalPrice.ToString() + " " + "Kč";
+            int TotalPiece = GetTotalPieceOfSelectedGoods(GoodsFromCart);
+            PieceOFSelectedGoods.Text = TotalPiece.ToString() + " " + "Položek";
+        }
+
+        public int GetTotalPriceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPrice = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPrice += cartgoods[i].Price;
+            }
+            return TotalPrice;
+        }
+
+        public int GetTotalPieceOfSelectedGoods(List<CartGoods> cartgoods)
+        {
+            int TotalPiece = 0;
+            for (int i = 0; i < cartgoods.Count; i++)
+            {
+                TotalPiece += cartgoods[i].GoodsQauntity;
+            }
+            return TotalPiece;
+        }
+
+        private void ListViewOfCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            if (ListViewOfCategories.SelectedItem != null)
+            {
+                var item = ListViewOfCategories.SelectedItem as GoodsCategory;
+                NavigationService ns = NavigationService.GetNavigationService(this);
+                ns.Navigate(new CatalogPage(item, GoodsName, GoodsCartList, PieceList));
+
+            }
+        }
+
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
@@ -69,6 +109,12 @@ namespace MusicShop
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService ns = NavigationService.GetNavigationService(this);
+            ns.Navigate(new CatalogPage(GoodsName, GoodsCartList, PieceList));
+        }
+
+        private void NameOfShop_Click(object sender, RoutedEventArgs e)
         {
             NavigationService ns = NavigationService.GetNavigationService(this);
             ns.Navigate(new CatalogPage(GoodsName, GoodsCartList, PieceList));
