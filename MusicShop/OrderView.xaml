@@ -140,13 +140,6 @@
                 <ListView x:Name="ListViewOfOrder" Visibility="Hidden" Grid.Column="2">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Width="250">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Label Background="Black" Width="180" Height="120" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
                             <GridViewColumn Header="Nazev" Width="250" DisplayMemberBinding="{Binding Name}"/>
                             <GridViewColumn Header="Cena" Width="75" DisplayMemberBinding="{Binding Price}"/>
                             <GridViewColumn Header="Mnozstvi" Width="120" DisplayMemberBinding="{Binding GoodsQauntity}" />

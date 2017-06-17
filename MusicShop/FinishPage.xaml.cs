@@ -64,8 +64,13 @@ namespace MusicShop
             Random r = new Random();
             int rnd = r.Next();
 
-            int TotalPrice = GetTotalPrice();
+            int TotalPrice = 0;
+            for (int i = 0; i < GoodsInCart.Count; i++)
+            {
+                TotalPrice += GoodsInCart[i].TotalPrice;
+            }
 
+            TotalPrice += Transport.Price;
             Order Order = new Order();
             Order.CustomerID = Customer.CustomerID;
             Order.TransportID = Transport.TransportID;
@@ -93,16 +98,6 @@ namespace MusicShop
 
             var ordergoods = OrderGoodsDatabase.GetItemsAsync().Result;
             var order = OrderDatabase.GetItemsAsync().Result;
-        }
-
-        public int GetTotalPrice()
-        {
-            int TotalPrice = 0;
-            for (int i = 0; i < GoodsInCart.Count; i++)
-            {
-                TotalPrice += GoodsInCart[i].TotalPrice;
-            }
-            return TotalPrice;
         }
 
         public void GetValueForShopCartInfo(List<CartGoods> GoodsFromCart)
